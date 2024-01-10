@@ -4,12 +4,15 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.Robot;
 import frc.robot.VortexSwerveCode.lib.math.Conversions;
 import frc.robot.VortexSwerveCode.lib.util.CTREModuleState;
 import frc.robot.VortexSwerveCode.lib.util.SwerveModuleConstants;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel;
@@ -85,7 +88,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getCanCoder(){
-        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValueAsDouble());
+        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValueAsDouble() * 360);
     }
 
     public void resetToAbsolute(){
@@ -94,8 +97,13 @@ public class SwerveModule {
     }
 
     private void configAngleEncoder(){        
-        angleEncoder.configFactoryDefault();
-        angleEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
+        // This is the new way to reset to the default config
+        angleEncoder.getConfigurator().apply(new CANcoderConfiguration());
+        MagnetSensorConfigs config = new MagnetSensorConfigs();
+        config.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+        config.SensorDirection = (Constants.Swerve.canCoderInvert) ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
+
+        angleEncoder.getConfigurator().apply(config);
     }
 
     private void configAngleMotor(){
