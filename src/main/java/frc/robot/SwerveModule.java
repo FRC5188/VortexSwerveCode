@@ -15,6 +15,8 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -98,18 +100,39 @@ public class SwerveModule {
 
     private void configAngleMotor(){
         mAngleMotor.restoreFactoryDefaults();
-        mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
+
+        // Setting the PID Configurations. This was contained within the configuration object for TalonFX.
+        // I'm just going to make a local variable that stores the PID Controller for the angle and drive motors so that we don't
+        // have to call it like four times just for setting something.
+        SparkPIDController angleMotorPID = mAngleMotor.getPIDController();
+        angleMotorPID.setP(Constants.Swerve.angleKP);
+        angleMotorPID.setI(Constants.Swerve.angleKI);
+        angleMotorPID.setD(Constants.Swerve.angleKD);
+        angleMotorPID.setFF(Constants.Swerve.angleKF); 
+
+        mAngleMotor.setSmartCurrentLimit(Constants.Swerve.angleContinuousCurrentLimit);
+        mAngleMotor.setSecondaryCurrentLimit(Constants.Swerve.anglePeakCurrentLimit);
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
-        mAngleMotor.setNeutralMode(Constants.Swerve.angleNeutralMode);
+        mAngleMotor.setIdleMode(IdleMode.kCoast); // TODO: Add this coast mode in constants. 
         resetToAbsolute();
     }
 
     private void configDriveMotor(){        
-        mDriveMotor.configFactoryDefault();
-        mDriveMotor.configAllSettings(Robot.ctreConfigs.swerveDriveFXConfig);
+        mDriveMotor.restoreFactoryDefaults();
+
+        SparkPIDController driveMotorPID = mDriveMotor.getPIDController();
+        driveMotorPID.setP(Constants.Swerve.angleKP);
+        driveMotorPID.setI(Constants.Swerve.angleKI);
+        driveMotorPID.setD(Constants.Swerve.angleKD);
+        driveMotorPID.setFF(Constants.Swerve.angleKF); 
+
+        mDriveMotor.setSmartCurrentLimit(Constants.Swerve.driveContinuousCurrentLimit);
+        mDriveMotor.setSecondaryCurrentLimit(Constants.Swerve.drivePeakCurrentLimit);
         mDriveMotor.setInverted(Constants.Swerve.driveMotorInvert);
-        mDriveMotor.setNeutralMode(Constants.Swerve.driveNeutralMode);
-        mDriveMotor.setSelectedSensorPosition(0);
+        mDriveMotor.setIdleMode(IdleMode.kCoast);
+
+        // We need to set this position based on the value from the CANCoder
+        mDriveMotor.getEncoder().setPosition(0);
     }
 
     public SwerveModuleState getState(){
