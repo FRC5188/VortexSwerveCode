@@ -3,10 +3,10 @@ package frc.robot.VortexSwerveCode.lib.util;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SwerveModuleConstants {
-    public final int driveMotorID;
-    public final int angleMotorID;
-    public final int cancoderID;
-    public final Rotation2d angleOffset;
+    public final int _driveMotorID;
+    public final int _angleMotorID;
+    public final int _cancoderID;
+    public final Rotation2d _angleOffset;
 
     /**
      * Swerve Module Constants to be used when creating swerve modules.
@@ -16,9 +16,9 @@ public class SwerveModuleConstants {
      * @param angleOffset
      */
     public SwerveModuleConstants(int driveMotorID, int angleMotorID, int canCoderID, Rotation2d angleOffset) {
-        this.driveMotorID = driveMotorID;
-        this.angleMotorID = angleMotorID;
-        this.cancoderID = canCoderID;
-        this.angleOffset = angleOffset;
+        this._driveMotorID = driveMotorID;
+        this._angleMotorID = angleMotorID;
+        this._cancoderID = canCoderID;
+        this._angleOffset = angleOffset;
     }
 }

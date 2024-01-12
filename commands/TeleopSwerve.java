@@ -7,7 +7,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.VortexSwerveCode.Constants;
-import frc.robot.VortexSwerveCode.Swerve;
+import frc.robot.VortexSwerveCode.subsystems.Swerve;
 
 
 public class TeleopSwerve extends Command {    
