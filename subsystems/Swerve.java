@@ -82,7 +82,7 @@ public class Swerve extends SubsystemBase {
     public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
         for (SwerveModule mod : _swerveMods) {
-            states[mod._moduleNumber] = mod.getState();
+            states[mod._moduleNumber] = mod.getCurrentState();
         }
         return states;
     }
@@ -120,7 +120,8 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Cancoder With Offset", mod.getCanCoderWithOffset().getDegrees());
             SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Actual Speed", mod.getCurrentState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Desired Speed", mod.getDesiredState().speedMetersPerSecond);
             SmartDashboard.putNumber("Gyroscope Angle", _gyro.getAngle());
             SmartDashboard.putNumber("Distance: ", this.getPose().getX());
         }

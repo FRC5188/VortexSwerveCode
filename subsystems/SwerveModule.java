@@ -31,6 +31,9 @@ public class SwerveModule {
 
     private SparkPIDController _rotatePID;
 
+    // Only use this for debugging
+    private SwerveModuleState _debugModuleState;
+
     SimpleMotorFeedforward _feedforward = new SimpleMotorFeedforward(
         Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
@@ -50,30 +53,24 @@ public class SwerveModule {
         _driveMotor = new CANSparkFlex(moduleConstants._driveMotorID, CANSparkLowLevel.MotorType.kBrushless);
         configDriveMotor();
 
-        _lastAngle = getState().angle;
-
-        double positionConversionFactor = Constants.Swerve.wheelCircumference * Constants.Swerve.driveGearRatio;
-        double velocityConversionFactor = positionConversionFactor / 60.0;
-
-        _driveMotor.getEncoder().setPositionConversionFactor(positionConversionFactor);
-        _driveMotor.getEncoder().setVelocityConversionFactor(velocityConversionFactor);
-
-        _angleMotor.getEncoder().setPositionConversionFactor(360 * Constants.Swerve.driveGearRatio * Math.PI);
-        _angleMotor.getEncoder().setVelocityConversionFactor((360 * Constants.Swerve.driveGearRatio * Math.PI / 60));
+        _lastAngle = getCurrentState().angle;
 
         _rotatePID = _angleMotor.getPIDController();
+
+        _debugModuleState = new SwerveModuleState();
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         /* This is a custom optimize function, since default WPILib optimize assumes continuous controller which CTRE and Rev onboard is not */
-        desiredState = CTREModuleState.optimize(desiredState, getState().angle);
+        _debugModuleState = desiredState;
+        desiredState = CTREModuleState.optimize(desiredState, getCurrentState().angle);
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
-        _driveMotor.setVoltage(desiredState.speedMetersPerSecond
-                / Constants.Swerve.maxSpeed * Constants.Swerve.maxVoltage);
+        _driveMotor.set(desiredState.speedMetersPerSecond
+                / Constants.Swerve.maxSpeed);
     }
 
     private void setAngle(SwerveModuleState desiredState) {
@@ -115,8 +112,8 @@ public class SwerveModule {
 
     private void configAngleMotor(){
         _angleMotor.restoreFactoryDefaults();
-        _angleMotor.setSmartCurrentLimit(Constants.Swerve.angleContinuousCurrentLimit);
-        _angleMotor.setSecondaryCurrentLimit(Constants.Swerve.anglePeakCurrentDuration);
+        // _angleMotor.setSmartCurrentLimit(Constants.Swerve.angleContinuousCurrentLimit);
+        // _angleMotor.setSecondaryCurrentLimit(Constants.Swerve.anglePeakCurrentDuration);
         _angleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         _angleMotor.setIdleMode(Constants.Swerve.angleNeutralMode);
         
@@ -130,37 +127,47 @@ public class SwerveModule {
         anglePIDController.setD(Constants.Swerve.angleKD);
         anglePIDController.setFF(Constants.Swerve.angleKF);
 
+        _angleMotor.getEncoder().setPositionConversionFactor(360 * Constants.Swerve.driveGearRatio * Math.PI);
+        _angleMotor.getEncoder().setVelocityConversionFactor((360 * Constants.Swerve.driveGearRatio * Math.PI / 60));
+
         _angleMotor.getPIDController().setOutputRange(-0.25, 0.25);
     }
 
     private void configDriveMotor(){        
         _driveMotor.restoreFactoryDefaults();
-        _driveMotor.setSmartCurrentLimit(Constants.Swerve.driveContinuousCurrentLimit);
-        _driveMotor.setSecondaryCurrentLimit(Constants.Swerve.drivePeakCurrentDuration);
+        // _driveMotor.setSmartCurrentLimit(Constants.Swerve.driveContinuousCurrentLimit);
+        // _driveMotor.setSecondaryCurrentLimit(Constants.Swerve.drivePeakCurrentDuration);
         _driveMotor.setInverted(Constants.Swerve.driveMotorInvert);
         _driveMotor.setIdleMode(Constants.Swerve.driveNeutralMode);
-        _driveMotor.setOpenLoopRampRate(Constants.Swerve.openLoopRamp);
-        _driveMotor.setClosedLoopRampRate(Constants.Swerve.closedLoopRamp);
+        // _driveMotor.setOpenLoopRampRate(Constants.Swerve.openLoopRamp);
+        // _driveMotor.setClosedLoopRampRate(Constants.Swerve.closedLoopRamp);
 
-        _driveMotor.getEncoder().setVelocityConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference / 60);
-        _driveMotor.getEncoder().setPositionConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference);
-        _driveMotor.getEncoder().setPosition(0);
+        // _driveMotor.getEncoder().setVelocityConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference / 60);
+        // _driveMotor.getEncoder().setPositionConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference);
+        // _driveMotor.getEncoder().setPosition(0);
 
-        _driveMotor.getPIDController().setP(Constants.Swerve.driveKP);
-        _driveMotor.getPIDController().setI(Constants.Swerve.driveKI);
-        _driveMotor.getPIDController().setD(Constants.Swerve.driveKD);
-        _driveMotor.getPIDController().setFF(Constants.Swerve.driveKF);
+        // _driveMotor.getPIDController().setP(Constants.Swerve.driveKP);
+        // _driveMotor.getPIDController().setI(Constants.Swerve.driveKI);
+        // _driveMotor.getPIDController().setD(Constants.Swerve.driveKD);
+        // _driveMotor.getPIDController().setFF(Constants.Swerve.driveKF);
 
-        _driveMotor.getPIDController().setOutputRange(-0.5, 0.5);
+        // _driveMotor.getPIDController().setOutputRange(-0.5, 0.5);
     }
 
-    public SwerveModuleState getState() {
-        double motorRPM = _driveMotor.getEncoder().getVelocity() * (600.0 / Constants.Swerve.encoderTicksPerRotation);
-        double wheelRPM = motorRPM / Constants.Swerve.driveGearRatio;
-        double wheelMPS = (wheelRPM * Constants.Swerve.wheelCircumference) / 60;
+    public SwerveModuleState getCurrentState() {
+        // double motorRPM = _driveMotor.getEncoder().getVelocity() * (600.0 / Constants.Swerve.encoderTicksPerRotation);
+        // double wheelRPM = motorRPM / Constants.Swerve.driveGearRatio;
+        // double wheelMPS = (wheelRPM * Constants.Swerve.wheelCircumference) / 60;
         return new SwerveModuleState(
-            wheelMPS,
+            _driveMotor.get(),
             getAngle()
+        );
+    }
+
+    public SwerveModuleState getDesiredState() {
+        return new SwerveModuleState(
+            _debugModuleState.speedMetersPerSecond / Constants.Swerve.maxSpeed,
+            _debugModuleState.angle
         );
     }
 
