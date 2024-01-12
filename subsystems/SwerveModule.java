@@ -71,6 +71,7 @@ public class SwerveModule {
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
         _driveMotor.set(desiredState.speedMetersPerSecond
                 / Constants.Swerve.maxSpeed);
+        
     }
 
     private void setAngle(SwerveModuleState desiredState) {
