@@ -36,7 +36,7 @@ public class Swerve extends SubsystemBase {
          * See https://github.com/Team364/BaseFalconSwerve/issues/8 for more info.
          */
         Timer.delay(1.0);
-        resetModulesToAbsolute();
+        
 
         _swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
     }
@@ -121,7 +121,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Cancoder With Offset", mod.getCanCoderWithOffset().getDegrees());
             SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Actual Speed", mod.getCurrentState().speedMetersPerSecond);
-            SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Desired Speed", mod.getDesiredState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Mod " + mod._moduleNumber + " Desired Angle", mod.getDesiredState().angle.getDegrees());
             SmartDashboard.putNumber("Gyroscope Angle", _gyro.getAngle());
             SmartDashboard.putNumber("Distance: ", this.getPose().getX());
         }

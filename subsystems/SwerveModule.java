@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.VortexSwerveCode.Constants;
 import frc.robot.VortexSwerveCode.lib.math.Conversions;
 import frc.robot.VortexSwerveCode.lib.util.CTREModuleState;
@@ -58,6 +59,9 @@ public class SwerveModule {
         _rotatePID = _angleMotor.getPIDController();
 
         _debugModuleState = new SwerveModuleState();
+
+        Timer.delay(1.0);
+        resetToAbsolute();
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -96,7 +100,7 @@ public class SwerveModule {
     }
 
     public void resetToAbsolute() {
-        _angleMotor.getEncoder().setPosition(getCanCoder().getDegrees() - _angleOffset.getDegrees());
+        _angleMotor.getEncoder().setPosition(Conversions.degreesToVortex(getCanCoderWithOffset().getDegrees(), Constants.Swerve.angleGearRatio));
     }
 
     private void configAngleEncoder() {
@@ -118,10 +122,6 @@ public class SwerveModule {
         _angleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         _angleMotor.setIdleMode(Constants.Swerve.angleNeutralMode);
         
-        _angleMotor.getEncoder().setPositionConversionFactor((1/Constants.Swerve.angleGearRatio) * 360);
-
-        resetToAbsolute();
-
         SparkPIDController anglePIDController = _angleMotor.getPIDController();
         anglePIDController.setP(Constants.Swerve.angleKP);
         anglePIDController.setI(Constants.Swerve.angleKI);
@@ -143,9 +143,9 @@ public class SwerveModule {
         // _driveMotor.setOpenLoopRampRate(Constants.Swerve.openLoopRamp);
         // _driveMotor.setClosedLoopRampRate(Constants.Swerve.closedLoopRamp);
 
-        // _driveMotor.getEncoder().setVelocityConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference / 60);
-        // _driveMotor.getEncoder().setPositionConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference);
-        // _driveMotor.getEncoder().setPosition(0);
+        _driveMotor.getEncoder().setVelocityConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference / 60);
+        _driveMotor.getEncoder().setPositionConversionFactor(1/Constants.Swerve.driveGearRatio * Constants.Swerve.wheelCircumference);
+        _driveMotor.getEncoder().setPosition(0);
 
         // _driveMotor.getPIDController().setP(Constants.Swerve.driveKP);
         // _driveMotor.getPIDController().setI(Constants.Swerve.driveKI);

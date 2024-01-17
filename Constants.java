@@ -23,8 +23,8 @@ public final class Constants {
             COTSSwerveConstants.SDSMK4i(COTSSwerveConstants.driveGearRatios.SDSMK4I_L2);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(20.75); //TODO: This must be tuned to specific robot
-        public static final double wheelBase = Units.inchesToMeters(24.75); //TODO: This must be tuned to specific robot
+        public static final double trackWidth = Units.inchesToMeters(24.75); //TODO: This must be tuned to specific robot
+        public static final double wheelBase = Units.inchesToMeters(20.75); //TODO: This must be tuned to specific robot
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -84,15 +84,15 @@ public final class Constants {
         /** Meters per Second */
         public static final double maxSpeed = 6784 / 60 * Swerve.driveGearRatio * Swerve.wheelCircumference; //TODO: This must be tuned to specific robot
         /** Radians per Second */
-        public static final double maxAngularVelocity = 10.0; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 100.0; //TODO: This must be tuned to specific robot
 
         public static final double maxVoltage = 12.0;
         public static final double maxRPM = 6784.0 / 60.0;
         public static final double encoderTicksPerRotation = 7168;
 
         /* Neutral Modes */
-        public static final IdleMode angleNeutralMode = IdleMode.kCoast;
-        public static final IdleMode driveNeutralMode = IdleMode.kBrake;
+        public static final IdleMode angleNeutralMode = IdleMode.kBrake;
+        public static final IdleMode driveNeutralMode = IdleMode.kCoast;
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
